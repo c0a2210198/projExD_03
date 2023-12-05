@@ -26,6 +26,7 @@ def check_bound(obj_rct: pg.Rect) -> tuple[bool, bool]:
     return yoko, tate
 
 
+
 class Bird:
     """
     ゲームキャラクター（こうかとん）に関するクラス
@@ -66,6 +67,7 @@ class Bird:
         self.img = self.imgs[(+5, 0)]  # 右向きこうかとんをデフォ画像にする
         self.rct = self.img.get_rect()
         self.rct.center = xy
+    
 
     def change_img(self, num: int, screen: pg.Surface):
         """
@@ -145,6 +147,24 @@ class Beam:
         self.rct.move_ip(self.vx, self.vy)
         screen.blit(self.img, self.rct)
 
+class Explosion:
+    def __init__(self,bird:Bird):
+        self.exp = pg.image.load("/ex03/fig/explosion.gif")
+        self.exp_flip = pg.image.load("/ex03/fig/explosion.gif").convert()
+        self.exp_tos = pg.transform.flip(self.exp_flip,True,False)
+        self.rct = self.exp.get_rect()
+        self.rct.centery = bird.rct.centery   # こうかとんの中心座標を取得
+        self.rct.centerx = bird.rct.centerx+bird.rct.width/2
+        self.vx, self.vy = +5, 0
+        self.life == 0
+    def update(self, screen: pg.Surface):
+        if self.exp_lst[0]:
+            self.life -= 1
+            screen.blit(self.exp,self.rct)
+        else:
+            self.life += 1
+            self.exp_tos
+            
 
 def main():
     pg.display.set_caption("たたかえ！こうかとん")
@@ -153,10 +173,13 @@ def main():
     bird = Bird(3, (900, 400))
     # BombインスタンスがNUM個並んだリスト
     bombs = [Bomb() for _ in range(NUM_OF_BOMBS)]  
+
     beam = None
 
     clock = pg.time.Clock()
     tmr = 0
+    Explosion = []
+    
     while True:
         for event in pg.event.get():
             if event.type == pg.QUIT:
@@ -179,6 +202,14 @@ def main():
                 beam = None
                 bombs[i] = None
                 bird.change_img(6, screen)
+                
+        for i, Explosion in enumerate(Explosion):
+            if beam is not None and beam.rct.colliderect(bomb.rct):       
+                
+                self.life.append()
+
+        Explosion.update(screen)
+
         # Noneでない爆弾だけのリストを作る
         bombs = [bomb for bomb in bombs if bomb is not None]
 
@@ -189,9 +220,11 @@ def main():
         if beam is not None:
             beam.update(screen)
         pg.display.update()
+        
         tmr += 1
         clock.tick(50)
-
+        
+    
 
 if __name__ == "__main__":
     pg.init()
